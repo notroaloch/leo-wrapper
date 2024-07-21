@@ -1,0 +1,24 @@
+{
+  "name": "leo-wrapper",
+  "description": "Un cliente/wrapper para el API de LEO (Universidad de Guadalajara)",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [
+    "api",
+    "wrapper",
+    "udg",
+    "leo",
+    "microleo"
+  ],
+  "author": "notroaloch",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.2.1",
+    "typescript": "^5.5.3"
+  }
+}
