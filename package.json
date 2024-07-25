@@ -5,6 +5,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "url": "https://github.com/notroaloch/leo-wrapper"
+  },
   "scripts": {
     "build": "tsup"
   },
@@ -20,5 +23,10 @@
   "devDependencies": {
     "tsup": "^8.2.1",
     "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "axios": "^1.7.2",
+    "bcrypt": "^5.1.1"
   }
 }

@@ -4,5 +4,6 @@
 .env
 .DS_Store
 
+run.ts
 tsconfig.json
 tsup.config.ts
