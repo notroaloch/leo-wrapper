@@ -47,3 +47,24 @@ export type StudentInfo = {
   teleemergenci: string;
   tiposangre: string;
 };
+
+export type StudentCareer = {
+  certificacion: string;
+  cicladmision: string;
+  ciclefectivo: string;
+  desccentro: string;
+  descestatus: string;
+  descnivel: string;
+  descprograma: string;
+  descsede: string;
+  emailudg: string;
+  idPlan: string;
+  idcentro: string;
+  idestatus: string;
+  idprograma: string;
+  idsede: string;
+  nivel: string;
+  siglacentro: string;
+  siiacampus: string;
+  tipoestatus: string;
+};

@@ -7,6 +7,7 @@ import {
   AuthCredentials,
   AuthToken,
   MicroLeoResponse,
+  StudentCareer,
   StudentInfo,
 } from '../types';
 
@@ -43,6 +44,24 @@ export default class LeoWrapper {
 
       const studentInfo: StudentInfo = data.respuesta;
       return studentInfo;
+    } catch (error) {
+      throw new LeoError(error);
+    }
+  }
+
+  public async getStudentCareers() {
+    try {
+      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
+        `/esc-alumnos/v1/${this.auth?.authCredentials.userCode}/planes-estudios`,
+        {
+          validateStatus: (status: number) => {
+            return status === 200;
+          },
+        }
+      );
+
+      const studentCareers: StudentCareer[] = data.respuesta;
+      return studentCareers;
     } catch (error) {
       throw new LeoError(error);
     }
