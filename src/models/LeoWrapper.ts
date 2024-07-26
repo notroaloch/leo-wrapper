@@ -6,6 +6,7 @@ import MicroLeoAPI from '../api/microleo';
 import {
   AuthCredentials,
   AuthToken,
+  Subject,
   MicroLeoResponse,
   StudentCareer,
   StudentInfo,
@@ -62,6 +63,27 @@ export default class LeoWrapper {
 
       const studentCareers: StudentCareer[] = data.respuesta;
       return studentCareers;
+    } catch (error) {
+      throw new LeoError(error);
+    }
+  }
+
+  public async getStudentSchedule(
+    careerProgramID: string,
+    academicTerm: string
+  ) {
+    try {
+      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
+        `/esc-alumnos/v1/${this.auth?.authCredentials.userCode}/${careerProgramID}/${academicTerm}/horarios`,
+        {
+          validateStatus: (status: number) => {
+            return status === 200;
+          },
+        }
+      );
+
+      const studentSchedule: Subject[] = data.respuesta;
+      return studentSchedule;
     } catch (error) {
       throw new LeoError(error);
     }

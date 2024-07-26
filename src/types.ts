@@ -68,3 +68,35 @@ export type StudentCareer = {
   siiacampus: string;
   tipoestatus: string;
 };
+
+export type Subject = {
+  crn: string;
+  creditos: string;
+  idcampus: string;
+  idcurso: string;
+  nombcurso: string;
+  numeseccion: string;
+  tiporegistro: string;
+  profesores: Teacher[];
+  horarios: SubjectSchedule[];
+};
+
+export type Teacher = {
+  idprofesor: string;
+  nombres: string;
+  apellidos: string;
+};
+
+export type SubjectSchedule = {
+  fechainicio: string;
+  fechafin: string;
+  horas: Schedule[];
+};
+
+export type Schedule = {
+  dia: string;
+  edificio: string;
+  hora: string;
+  idedificio: string;
+  numesalon: string;
+};
