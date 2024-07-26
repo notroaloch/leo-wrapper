@@ -7,7 +7,6 @@ const MicroLeoAPI = axios.create({
     'Content-Type': 'application/json',
     'User-Agent': 'LeoWrapper',
   } as RawAxiosRequestHeaders,
-  timeout: 1000,
   withCredentials: true,
 });
 

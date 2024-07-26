@@ -23,3 +23,27 @@ export type AuthTokenResponse = {
   ip_mov: string;
   vigencia_extra: string;
 };
+
+export type StudentInfo = {
+  alumcodigo: string;
+  curp: string;
+  desctiposangr: string;
+  domicilio: string;
+  email: string;
+  fechnacimient: string;
+  firma: string;
+  foto: string;
+  genero: string;
+  imss: string;
+  lugadomicilio: {
+    cp: string;
+    estado: string;
+    municipio: string;
+    pais: string;
+  };
+  lugadomicilioDB: string;
+  nombre: string;
+  rfc: string;
+  teleemergenci: string;
+  tiposangre: string;
+};

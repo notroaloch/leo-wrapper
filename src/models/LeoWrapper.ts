@@ -1,5 +1,14 @@
+import { AxiosResponse } from 'axios';
+
 import LeoAuth from './LeoAuth';
-import { AuthCredentials, AuthToken } from '../types';
+import LeoError from './LeoError';
+import MicroLeoAPI from '../api/microleo';
+import {
+  AuthCredentials,
+  AuthToken,
+  MicroLeoResponse,
+  StudentInfo,
+} from '../types';
 
 // Manages the main wrapper logic (methods as API calls)
 export default class LeoWrapper {
@@ -17,7 +26,25 @@ export default class LeoWrapper {
   }
   private constructor() {}
 
-  public get authToken(): AuthToken | undefined {
+  private get authToken(): AuthToken | undefined {
     return this.auth?.authToken;
+  }
+
+  public async getStudentInfo() {
+    try {
+      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
+        `/sii-alumnos/v1/${this.auth?.authCredentials.userCode}/datos-personales`,
+        {
+          validateStatus: (status: number) => {
+            return status === 200;
+          },
+        }
+      );
+
+      const studentInfo: StudentInfo = data.respuesta;
+      return studentInfo;
+    } catch (error) {
+      throw new LeoError(error);
+    }
   }
 }

@@ -15,6 +15,7 @@ import {
   getFormattedTimestamp,
   hashPassword,
 } from '../utils/auth/index';
+import LeoError from './LeoError';
 
 // Manages the auth logic (token generation and API instance auth headers configuration)
 export default class LeoAuth {
@@ -85,27 +86,37 @@ export default class LeoAuth {
   // User credentials (code & password) are needed for the token request
 
   private async generateAuthToken(): Promise<AuthToken> {
-    //  Bcrypt hashing 10 rounds
-    const hashedPassword = await hashPassword(this._credentials.userPassword);
+    try {
+      //  Bcrypt hashing 10 rounds
+      const hashedPassword = await hashPassword(this._credentials.userPassword);
 
-    const { data, status }: AxiosResponse<MicroLeoResponse> =
-      await MicroLeoAPI.post('/login/v1/validar', null, {
-        headers: {
-          Authorization: this._customToken?.id,
-        },
-        params: {
-          usr: this._credentials.userCode,
-          pwd: hashedPassword,
-        },
-      });
+      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.post(
+        '/login/v1/validar',
+        null,
+        {
+          headers: {
+            Authorization: this._customToken?.id,
+          },
+          params: {
+            usr: this._credentials.userCode,
+            pwd: hashedPassword,
+          },
+          validateStatus: (status: number) => {
+            return status === 201;
+          },
+        }
+      );
 
-    const { id_token, vigencia }: AuthTokenResponse = data.respuesta;
+      const { id_token, vigencia }: AuthTokenResponse = data.respuesta;
 
-    const authToken: AuthToken = {
-      id: `Bearer ${id_token}`,
-      expires: vigencia,
-    };
+      const authToken: AuthToken = {
+        id: `Bearer ${id_token}`,
+        expires: vigencia,
+      };
 
-    return authToken;
+      return authToken;
+    } catch (error) {
+      throw new LeoError(error);
+    }
   }
 }
