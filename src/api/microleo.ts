@@ -1,4 +1,11 @@
-import axios, { RawAxiosRequestHeaders } from 'axios';
+import axios, {
+  RawAxiosRequestHeaders,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
+import { MicroLeoResponse } from '../types';
+import LeoError from '../models/LeoError';
 
 const MicroLeoAPI = axios.create({
   baseURL: 'https://micro-leo.udg.mx',
@@ -9,5 +16,18 @@ const MicroLeoAPI = axios.create({
   } as RawAxiosRequestHeaders,
   withCredentials: true,
 });
+
+export const fetch = async <T>(config: AxiosRequestConfig): Promise<T> => {
+  try {
+    const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.request(
+      config
+    );
+
+    const response = data.respuesta as T;
+    return response;
+  } catch (error) {
+    throw new LeoError(error);
+  }
+};
 
 export default MicroLeoAPI;

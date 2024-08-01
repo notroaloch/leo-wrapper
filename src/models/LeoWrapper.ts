@@ -1,16 +1,10 @@
-import { AxiosResponse } from 'axios';
-
 import LeoAuth from './LeoAuth';
-import LeoError from './LeoError';
-import MicroLeoAPI from '../api/microleo';
+import { fetch } from '../api/microleo';
+import { AuthCredentials, StudentScheduleArgs } from '../types';
 import {
-  AuthCredentials,
-  AuthToken,
-  Subject,
-  MicroLeoResponse,
-  StudentCareer,
-  StudentInfo,
-} from '../types';
+  validateAcademicTerm,
+  validateCareerProgramID,
+} from '../utils/validate/regexp';
 
 // Manages the main wrapper logic (methods as API calls)
 export default class LeoWrapper {
@@ -22,70 +16,55 @@ export default class LeoWrapper {
     await leoWrapper.init(authCredentials);
     return leoWrapper;
   }
+
   private async init(authCredentials: AuthCredentials): Promise<LeoWrapper> {
     this.auth = await LeoAuth.build(authCredentials);
     return this;
   }
-  private constructor() {}
 
-  private get authToken(): AuthToken | undefined {
-    return this.auth?.authToken;
+  private get userCode(): number {
+    return this.auth!.authCredentials.userCode;
   }
 
-  public async getStudentInfo() {
-    try {
-      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
-        `/sii-alumnos/v1/${this.auth?.authCredentials.userCode}/datos-personales`,
-        {
-          validateStatus: (status: number) => {
-            return status === 200;
-          },
-        }
-      );
+  public async getStudentInfo<T>(): Promise<T> {
+    const studentInfo = await fetch<T>({
+      method: 'GET',
+      url: `/sii-alumnos/v1/${this.userCode}/datos-personales`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
 
-      const studentInfo: StudentInfo = data.respuesta;
-      return studentInfo;
-    } catch (error) {
-      throw new LeoError(error);
-    }
+    return studentInfo;
   }
 
-  public async getStudentCareers() {
-    try {
-      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
-        `/esc-alumnos/v1/${this.auth?.authCredentials.userCode}/planes-estudios`,
-        {
-          validateStatus: (status: number) => {
-            return status === 200;
-          },
-        }
-      );
+  public async getStudentCareers<T>(): Promise<T> {
+    const studentCareers = await fetch<T>({
+      method: 'GET',
+      url: `/esc-alumnos/v1/${this.userCode}/planes-estudios`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
 
-      const studentCareers: StudentCareer[] = data.respuesta;
-      return studentCareers;
-    } catch (error) {
-      throw new LeoError(error);
-    }
+    return studentCareers;
   }
 
-  public async getStudentSchedule(
-    careerProgramID: string,
-    academicTerm: string
-  ) {
-    try {
-      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.get(
-        `/esc-alumnos/v1/${this.auth?.authCredentials.userCode}/${careerProgramID}/${academicTerm}/horarios`,
-        {
-          validateStatus: (status: number) => {
-            return status === 200;
-          },
-        }
-      );
+  public async getStudentSchedule<T>({
+    academicTerm,
+    careerProgramID,
+  }: StudentScheduleArgs): Promise<T> {
+    validateAcademicTerm(academicTerm) &&
+      validateCareerProgramID(careerProgramID);
 
-      const studentSchedule: Subject[] = data.respuesta;
-      return studentSchedule;
-    } catch (error) {
-      throw new LeoError(error);
-    }
+    const studentSchedule = await fetch<T>({
+      method: 'GET',
+      url: `/esc-alumnos/v1/${this.userCode}/${careerProgramID}/${academicTerm}/horarios`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return studentSchedule;
   }
 }

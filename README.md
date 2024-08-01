@@ -1,6 +1,6 @@
 # Leo Wrapper
 
-Un cliente/wrapper para el API de LEO (Universidad de Guadalajara)
+Un cliente de Nodejs (server) para el API de LEO (Universidad de Guadalajara)
 
 ## Tabla de Contenidos
 
@@ -36,14 +36,14 @@ const LEO = await LeoWrapper.build({
 });
 ```
 
-Despues, use los métodos del cliente para hacer peticiones al API. El cliente utiliza async/await, por lo que necesitas proveer de un bloque trycatch para el manejo de errores
+Despues, use los métodos del cliente para hacer peticiones al API. El cliente utiliza async/await, por lo que necesitas proveer de un bloque trycatch para el manejo de errores.
 
 ```javascript
 // Obtener información personal del estudiante
-const studentInfo = await LEO.getStudentInfo();
+const studentInfo = await LEO.getStudentInfo<T>();
 
 // Obtener horario del estudiante
-const studentSchedule = await LEO.getStudentSchedule({
+const studentSchedule = await LEO.getStudentSchedule<T>({
   careerProgramID: 'INNI',
   academicTerm: '2024-B',
 });

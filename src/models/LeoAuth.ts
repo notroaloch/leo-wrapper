@@ -21,7 +21,7 @@ import LeoError from './LeoError';
 export default class LeoAuth {
   private _authToken?: AuthToken;
   private _customToken?: AuthToken;
-  private _credentials: AuthCredentials;
+  private _authCredentials: AuthCredentials;
 
   // Static class instance generator (allows async class constructor)
   static async build(authCredentials: AuthCredentials): Promise<LeoAuth> {
@@ -30,7 +30,7 @@ export default class LeoAuth {
     return auth;
   }
   private constructor(authCredentials: AuthCredentials) {
-    this._credentials = authCredentials;
+    this._authCredentials = authCredentials;
   }
 
   private async init(): Promise<LeoAuth> {
@@ -57,7 +57,7 @@ export default class LeoAuth {
   }
 
   public get authCredentials(): AuthCredentials {
-    return this._credentials;
+    return this._authCredentials;
   }
 
   // Generates a custom token needed for the Authorization header
@@ -88,7 +88,9 @@ export default class LeoAuth {
   private async generateAuthToken(): Promise<AuthToken> {
     try {
       //  Bcrypt hashing 10 rounds
-      const hashedPassword = await hashPassword(this._credentials.userPassword);
+      const hashedPassword = await hashPassword(
+        this._authCredentials.userPassword
+      );
 
       const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.post(
         '/login/v1/validar',
@@ -98,7 +100,7 @@ export default class LeoAuth {
             Authorization: this._customToken?.id,
           },
           params: {
-            usr: this._credentials.userCode,
+            usr: this._authCredentials.userCode,
             pwd: hashedPassword,
           },
           validateStatus: (status: number) => {
