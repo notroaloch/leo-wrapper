@@ -13,11 +13,32 @@ Un cliente de Nodejs (server) para el API de LEO (Universidad de Guadalajara)
 
 Esta librería incluye funcionalidades para la consulta de:
 
-#### Obtener información del estudiante
+#### Oferta Académica - Red UdeG
 
-- Información personal
-- Planes de estudio
-- Horarios
+- [ ] Oferta Académica
+- [ ] Ciclos Escolares
+- [ ] Sedes (Prepas SEMS)
+- [ ] Centros Universitarios
+- [ ] Programas Académicos
+
+#### Información del Estudiante
+
+- [x] Datos Personales
+- [x] Planes de Estudio
+- [x] Horarios
+- [ ] Credencial Virtual
+- [ ] Boleta
+- [ ] Kárdex
+- [ ] Adeudos (Orden de Pago)
+- [ ] Información de Ingreso
+- [ ] Créditos
+- [ ] Constancias
+- [ ] Avances por Promedio
+- [ ] Avances por Área
+- [ ] Materias Aprobadas
+- [ ] Suspensiones
+- [ ] Amonestaciones
+- [ ] Proyecciones
 
 ## Instalación
 
