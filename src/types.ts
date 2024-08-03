@@ -23,8 +23,3 @@ export type AuthTokenResponse = {
   ip_mov: string;
   vigencia_extra: string;
 };
-
-export type StudentScheduleArgs = {
-  careerProgramID: string;
-  academicTerm: string;
-};

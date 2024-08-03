@@ -15,11 +15,11 @@ Esta librería incluye funcionalidades para la consulta de:
 
 #### Oferta Académica - Red UdeG
 
-- [ ] Oferta Académica
-- [ ] Ciclos Escolares
-- [ ] Sedes (Prepas SEMS)
-- [ ] Centros Universitarios
-- [ ] Programas Académicos
+- [x] Oferta Académica
+- [x] Ciclos Escolares
+- [x] Sedes (Prepas SEMS)
+- [x] Centros Universitarios
+- [x] Programas Académicos
 
 #### Información del Estudiante
 

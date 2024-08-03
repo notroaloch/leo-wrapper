@@ -1,9 +1,10 @@
 import LeoAuth from './LeoAuth';
 import { fetch } from '../api/microleo';
-import { AuthCredentials, StudentScheduleArgs } from '../types';
+import { AuthCredentials } from '../types';
 import {
   validateAcademicTerm,
-  validateCareerProgramID,
+  validateCampusID,
+  validateCampusSEMSID,
 } from '../utils/validate/regexp';
 
 // Manages the main wrapper logic (methods as API calls)
@@ -24,6 +25,117 @@ export default class LeoWrapper {
 
   private get userCode(): number {
     return this.auth!.authCredentials.userCode;
+  }
+
+  public async getCampuses<T>(): Promise<T> {
+    const campuses = await fetch<T>({
+      method: 'GET',
+      url: '/esc-programas/v1/centros',
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return campuses;
+  }
+
+  public async getCampusesSEMS<T>(): Promise<T> {
+    const campusesSEMS = await fetch<T>({
+      method: 'GET',
+      url: '/esc-programas/v1/sedes',
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return campusesSEMS;
+  }
+
+  public async getCampusCareers<T>({
+    campusID,
+  }: {
+    campusID: string;
+  }): Promise<T> {
+    validateCampusID(campusID);
+
+    const campusCareers = await fetch<T>({
+      method: 'GET',
+      url: `/esc-programas/v1/${campusID}/programas-centros`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return campusCareers;
+  }
+
+  public async getCampusSEMSCareers<T>({
+    campusID,
+  }: {
+    campusID: string;
+  }): Promise<T> {
+    validateCampusSEMSID(campusID);
+
+    const campusCareers = await fetch<T>({
+      method: 'GET',
+      url: `/esc-programas/v1/${campusID}/programas-sedes`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return campusCareers;
+  }
+
+  public async getCareerAcademicTerms<T>({
+    careerID,
+  }: {
+    careerID: string;
+  }): Promise<T> {
+    const careerAcademicTerms = await fetch<T>({
+      method: 'GET',
+      url: `/esc-programas/v1/${careerID}/ciclos`,
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return careerAcademicTerms;
+  }
+
+  public async getAcademicOffer<T>({
+    campusID,
+    academicTerm,
+    careerID,
+    campusSEMSID,
+  }: {
+    campusID: string;
+    academicTerm: string;
+    careerID: string;
+    campusSEMSID?: string;
+  }): Promise<T> {
+    validateCampusID(campusID) &&
+      validateAcademicTerm(academicTerm) &&
+      validateCampusSEMSID(campusSEMSID ? campusSEMSID : 'UNDEFINED');
+
+    const academicOffer = await fetch<T>({
+      method: 'POST',
+      url: '/esc-ofertas/v1/horas-nrc',
+      data: {
+        idcentro: campusID,
+        idciclo: academicTerm,
+        idprograma: careerID,
+        idsede: campusSEMSID,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return academicOffer;
   }
 
   public async getStudentInfo<T>(): Promise<T> {
@@ -53,9 +165,11 @@ export default class LeoWrapper {
   public async getStudentSchedule<T>({
     academicTerm,
     careerProgramID,
-  }: StudentScheduleArgs): Promise<T> {
-    validateAcademicTerm(academicTerm) &&
-      validateCareerProgramID(careerProgramID);
+  }: {
+    academicTerm: string;
+    careerProgramID: string;
+  }): Promise<T> {
+    validateAcademicTerm(academicTerm);
 
     const studentSchedule = await fetch<T>({
       method: 'GET',
