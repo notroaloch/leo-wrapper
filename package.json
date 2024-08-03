@@ -1,15 +1,16 @@
 {
   "name": "leo-wrapper",
   "description": "Un cliente de Nodejs (server) para el API de LEO (Universidad de Guadalajara)",
-  "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "repository": {
     "url": "https://github.com/notroaloch/leo-wrapper"
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "lint": "tsc"
   },
   "keywords": [
     "api",
@@ -21,7 +22,8 @@
   "author": "notroaloch",
   "license": "MIT",
   "devDependencies": {
-    "tsup": "^8.2.1"
+    "tsup": "^8.2.1",
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
