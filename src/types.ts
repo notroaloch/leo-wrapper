@@ -14,6 +14,11 @@ export type MicroLeoResponse = {
   respuesta: any;
 };
 
+export type SoyUdeGResponse = {
+  code: number;
+  data: any;
+};
+
 export type AuthTokenResponse = {
   id_token: string;
   vigencia: string;

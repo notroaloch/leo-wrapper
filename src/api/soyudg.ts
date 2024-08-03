@@ -3,11 +3,11 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
-import { MicroLeoResponse } from '../types';
+import { MicroLeoResponse, SoyUdeGResponse } from '../types';
 import LeoError from '../models/LeoError';
 
-const MicroLeoAPI = axios.create({
-  baseURL: 'https://micro-leo.udg.mx',
+const SoyUdeGAPI = axios.create({
+  baseURL: 'https://soyudg.udg.mx',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -16,19 +16,19 @@ const MicroLeoAPI = axios.create({
   withCredentials: true,
 });
 
-export const fetchMicroLeo = async <T>(
+export const fetchSoyUDG = async <T>(
   config: AxiosRequestConfig
 ): Promise<T> => {
   try {
-    const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.request(
+    const { data }: AxiosResponse<SoyUdeGResponse> = await SoyUdeGAPI.request(
       config
     );
 
-    const response = data.respuesta as T;
+    const response = data.data as T;
     return response;
   } catch (error) {
     throw new LeoError(error);
   }
 };
 
-export default MicroLeoAPI;
+export default SoyUdeGAPI;

@@ -20,7 +20,7 @@ export const validateCampusID = (campusID: string) => {
 
 export const validateCampusSEMSID = (campusID: string) => {
   if (!CAMPUS_SEMS_ID_REGEXP.test(campusID)) {
-    throw new LeoError(new Error('Invalid campusID'));
+    throw new LeoError(new Error('Invalid campusSEMSID'));
   }
   return true;
 };

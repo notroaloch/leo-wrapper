@@ -7,7 +7,7 @@ Un cliente de Nodejs (server) para el API de LEO (Universidad de Guadalajara)
 - [Funcionalidades](#funcionalidades)
 - [Instalación](#instalación)
 - [Uso](#uso)
-- [Desarrollo](#desarrollo)
+- [Contribuir](#contribuir)
 
 ## Funcionalidades
 
@@ -26,7 +26,7 @@ Esta librería incluye funcionalidades para la consulta de:
 - [x] Datos Personales
 - [x] Planes de Estudio
 - [x] Horarios
-- [ ] Credencial Virtual
+- [x] Credencial Virtual
 - [ ] Boleta
 - [ ] Kárdex
 - [ ] Adeudos (Orden de Pago)
@@ -70,6 +70,6 @@ const studentSchedule = await LEO.getStudentSchedule<T>({
 });
 ```
 
-## Desarrollo
+## Contribuir
 
 ¿Crees que algo puede ser mejorado o incluido a la librería? [Abre un nuevo issue](https://github.com/notroaloch/leo-wrapper/issues/new) o clona el proyecto y envía un pull request con tus cambios

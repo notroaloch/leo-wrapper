@@ -16,6 +16,7 @@ import {
   hashPassword,
 } from '../utils/auth/index';
 import LeoError from './LeoError';
+import SoyUdeGAPI from '../api/soyudg';
 
 // Manages the auth logic (token generation and API instance auth headers configuration)
 export default class LeoAuth {
@@ -39,6 +40,17 @@ export default class LeoAuth {
 
     // Sets the authorization headers needed for all subsequent request using axios interceptors
     MicroLeoAPI.interceptors.request.use(
+      (config) => {
+        config.headers['Authorization'] = LeoAuth.generateCustomToken().id;
+        config.headers['Authorization-Key'] = this._authToken?.id;
+        return config;
+      },
+      (error) => {
+        // TODO: Implement Error
+      }
+    );
+
+    SoyUdeGAPI.interceptors.request.use(
       (config) => {
         config.headers['Authorization'] = LeoAuth.generateCustomToken().id;
         config.headers['Authorization-Key'] = this._authToken?.id;
@@ -79,6 +91,16 @@ export default class LeoAuth {
     };
 
     return customToken;
+  }
+
+  public static encryptUserCode(userCode: number): string {
+    const x = Math.floor(Date.now() / 1e3);
+    const key = userCode + '-' + x;
+    const encryptedUserCode = Buffer.from(
+      Buffer.from(key).toString('base64')
+    ).toString('base64');
+
+    return encryptedUserCode;
   }
 
   // Generates an authorization token needed for the Authorization-Key header

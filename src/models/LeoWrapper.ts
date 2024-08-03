@@ -1,5 +1,6 @@
 import LeoAuth from './LeoAuth';
-import { fetch } from '../api/microleo';
+import { fetchMicroLeo } from '../api/microleo';
+import { fetchSoyUDG } from '../api/soyudg';
 import { AuthCredentials } from '../types';
 import {
   validateAcademicTerm,
@@ -28,7 +29,7 @@ export default class LeoWrapper {
   }
 
   public async getCampuses<T>(): Promise<T> {
-    const campuses = await fetch<T>({
+    const campuses = await fetchMicroLeo<T>({
       method: 'GET',
       url: '/esc-programas/v1/centros',
       validateStatus(status: number) {
@@ -40,7 +41,7 @@ export default class LeoWrapper {
   }
 
   public async getCampusesSEMS<T>(): Promise<T> {
-    const campusesSEMS = await fetch<T>({
+    const campusesSEMS = await fetchMicroLeo<T>({
       method: 'GET',
       url: '/esc-programas/v1/sedes',
       validateStatus(status: number) {
@@ -58,7 +59,7 @@ export default class LeoWrapper {
   }): Promise<T> {
     validateCampusID(campusID);
 
-    const campusCareers = await fetch<T>({
+    const campusCareers = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/esc-programas/v1/${campusID}/programas-centros`,
       validateStatus(status: number) {
@@ -76,7 +77,7 @@ export default class LeoWrapper {
   }): Promise<T> {
     validateCampusSEMSID(campusID);
 
-    const campusCareers = await fetch<T>({
+    const campusCareers = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/esc-programas/v1/${campusID}/programas-sedes`,
       validateStatus(status: number) {
@@ -92,7 +93,7 @@ export default class LeoWrapper {
   }: {
     careerID: string;
   }): Promise<T> {
-    const careerAcademicTerms = await fetch<T>({
+    const careerAcademicTerms = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/esc-programas/v1/${careerID}/ciclos`,
       validateStatus(status: number) {
@@ -114,11 +115,10 @@ export default class LeoWrapper {
     careerID: string;
     campusSEMSID?: string;
   }): Promise<T> {
-    validateCampusID(campusID) &&
-      validateAcademicTerm(academicTerm) &&
-      validateCampusSEMSID(campusSEMSID ? campusSEMSID : 'UNDEFINED');
+    campusSEMSID && validateCampusSEMSID(campusSEMSID);
+    validateCampusID(campusID) && validateAcademicTerm(academicTerm);
 
-    const academicOffer = await fetch<T>({
+    const academicOffer = await fetchMicroLeo<T>({
       method: 'POST',
       url: '/esc-ofertas/v1/horas-nrc',
       data: {
@@ -139,7 +139,7 @@ export default class LeoWrapper {
   }
 
   public async getStudentInfo<T>(): Promise<T> {
-    const studentInfo = await fetch<T>({
+    const studentInfo = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/sii-alumnos/v1/${this.userCode}/datos-personales`,
       validateStatus(status: number) {
@@ -150,8 +150,27 @@ export default class LeoWrapper {
     return studentInfo;
   }
 
+  public async getStudentCard<T>({
+    userCode,
+  }: {
+    userCode: number;
+  }): Promise<T> {
+    const studentCard = await fetchSoyUDG<T>({
+      method: 'GET',
+      url: '/alumnos/show',
+      params: {
+        encryptedId: LeoAuth.encryptUserCode(userCode),
+      },
+      validateStatus(status: number) {
+        return status === 200;
+      },
+    });
+
+    return studentCard;
+  }
+
   public async getStudentCareers<T>(): Promise<T> {
-    const studentCareers = await fetch<T>({
+    const studentCareers = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/esc-alumnos/v1/${this.userCode}/planes-estudios`,
       validateStatus(status: number) {
@@ -171,7 +190,7 @@ export default class LeoWrapper {
   }): Promise<T> {
     validateAcademicTerm(academicTerm);
 
-    const studentSchedule = await fetch<T>({
+    const studentSchedule = await fetchMicroLeo<T>({
       method: 'GET',
       url: `/esc-alumnos/v1/${this.userCode}/${careerProgramID}/${academicTerm}/horarios`,
       validateStatus(status: number) {
