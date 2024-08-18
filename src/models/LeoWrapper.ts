@@ -1,15 +1,14 @@
-import LeoAuth from './LeoAuth';
-import { fetchMicroLeo } from '../api/microleo';
-import { fetchSoyUDG } from '../api/soyudg';
+import { LeoAuth, LeoError } from '../models';
+import { fetchMicroLeo, fetchSoyUdg } from '../api';
 import { AuthCredentials } from '../types';
 import {
   validateAcademicTerm,
   validateCampusID,
   validateCampusSEMSID,
-} from '../utils/validate/regexp';
+} from '../utils/validate';
 
 // Manages the main wrapper logic (methods as API calls)
-export default class LeoWrapper {
+export class LeoWrapper {
   private auth?: LeoAuth;
 
   // Static class instance generator (allows async class constructor)
@@ -115,8 +114,17 @@ export default class LeoWrapper {
     careerID: string;
     campusSEMSID?: string;
   }): Promise<T> {
-    campusSEMSID && validateCampusSEMSID(campusSEMSID);
-    validateCampusID(campusID) && validateAcademicTerm(academicTerm);
+    if (campusSEMSID && !validateCampusSEMSID(campusSEMSID)) {
+      throw new LeoError(new Error('Invalid campusSEMSID'));
+    }
+
+    if (!validateCampusID(campusID)) {
+      throw new LeoError(new Error('Invalid campusID'));
+    }
+
+    if (!validateAcademicTerm(academicTerm)) {
+      throw new LeoError(new Error('Invalid academicTerm'));
+    }
 
     const academicOffer = await fetchMicroLeo<T>({
       method: 'POST',
@@ -155,7 +163,7 @@ export default class LeoWrapper {
   }: {
     userCode: number;
   }): Promise<T> {
-    const studentCard = await fetchSoyUDG<T>({
+    const studentCard = await fetchSoyUdg<T>({
       method: 'GET',
       url: '/alumnos/show',
       params: {

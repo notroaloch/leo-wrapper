@@ -9,8 +9,9 @@
     "url": "https://github.com/notroaloch/leo-wrapper"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "lint": "tsc"
+    "dev": "nodemon run.ts",
+    "lint": "tsc",
+    "build": "tsup src/index.ts --format cjs,esm --dts"
   },
   "keywords": [
     "api",
@@ -22,13 +23,16 @@
   "author": "notroaloch",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^9.9.0",
+    "prettier": "^3.3.3",
     "@eslint/js": "^9.9.0",
     "@types/bcrypt": "^5.0.2",
-    "eslint": "^9.9.0",
-    "globals": "^15.9.0",
-    "tsup": "^8.2.1",
     "typescript": "^5.5.4",
-    "typescript-eslint": "^8.1.0"
+    "typescript-eslint": "^8.1.0",
+    "tsup": "^8.2.1",
+    "globals": "^15.9.0",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
     "axios": "^1.7.2",

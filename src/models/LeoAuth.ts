@@ -1,12 +1,6 @@
-import { AxiosResponse } from 'axios';
-import MicroLeoAPI from '../api/microleo';
-
-import {
-  AuthCredentials,
-  AuthToken,
-  AuthTokenResponse,
-  MicroLeoResponse,
-} from '../types';
+import { LeoError } from './index';
+import { MicroLeoApi, SoyUdgApi, fetchMicroLeo } from '../api';
+import { AuthCredentials, AuthToken, AuthTokenResponse } from '../types';
 
 import {
   AUTH_CUSTOM_TOKEN_BASE_PHRASE,
@@ -14,12 +8,10 @@ import {
   encryptPhrase,
   getFormattedTimestamp,
   hashPassword,
-} from '../utils/auth/index';
-import LeoError from './LeoError';
-import SoyUdeGAPI from '../api/soyudg';
+} from '../utils/auth';
 
 // Manages the auth logic (token generation and API instance auth headers configuration)
-export default class LeoAuth {
+export class LeoAuth {
   private _authToken?: AuthToken;
   private _customToken?: AuthToken;
   private _authCredentials: AuthCredentials;
@@ -39,25 +31,25 @@ export default class LeoAuth {
     this._authToken = await this.generateAuthToken();
 
     // Sets the authorization headers needed for all subsequent request using axios interceptors
-    MicroLeoAPI.interceptors.request.use(
+    MicroLeoApi.interceptors.request.use(
       (config) => {
         config.headers['Authorization'] = LeoAuth.generateCustomToken().id;
         config.headers['Authorization-Key'] = this._authToken?.id;
         return config;
       },
       (error) => {
-        // TODO: Implement Error
+        throw new LeoError(error);
       }
     );
 
-    SoyUdeGAPI.interceptors.request.use(
+    SoyUdgApi.interceptors.request.use(
       (config) => {
         config.headers['Authorization'] = LeoAuth.generateCustomToken().id;
         config.headers['Authorization-Key'] = this._authToken?.id;
         return config;
       },
       (error) => {
-        // TODO: Implement Error
+        throw new LeoError(error);
       }
     );
 
@@ -72,10 +64,10 @@ export default class LeoAuth {
     return this._authCredentials;
   }
 
-  // Generates a custom token needed for the Authorization header
-  // The output token is based on two cypher keys and the current timestamp
-  // The encryption is based on a custom algorithm (reverse engineered from Leo SourceCode)
-  // No user credentials are needed for the token generation
+  /* Generates a custom token needed for the Authorization header
+  The output token is based on two cypher keys and the current timestamp
+  The encryption is based on a custom algorithm (reverse engineered from Leo SourceCode)
+  No user credentials are needed for the token generation */
 
   public static generateCustomToken(): AuthToken {
     const cypherKey = AUTH_CUSTOM_TOKEN_CYPHER_KEY;
@@ -103,9 +95,9 @@ export default class LeoAuth {
     return encryptedUserCode;
   }
 
-  // Generates an authorization token needed for the Authorization-Key header
-  // The output token is obtained from MicroLeo server with an expiration date
-  // User credentials (code & password) are needed for the token request
+  /* Generates an authorization token needed for the Authorization-Key header
+  The output token is obtained from MicroLeo server with an expiration date
+  User credentials (code & password) are needed for the token request */
 
   private async generateAuthToken(): Promise<AuthToken> {
     try {
@@ -114,24 +106,20 @@ export default class LeoAuth {
         this._authCredentials.userPassword
       );
 
-      const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.post(
-        '/login/v1/validar',
-        null,
-        {
-          headers: {
-            Authorization: this._customToken?.id,
-          },
-          params: {
-            usr: this._authCredentials.userCode,
-            pwd: hashedPassword,
-          },
-          validateStatus: (status: number) => {
-            return status === 201;
-          },
-        }
-      );
-
-      const { id_token, vigencia }: AuthTokenResponse = data.respuesta;
+      const { id_token, vigencia } = await fetchMicroLeo<AuthTokenResponse>({
+        method: 'POST',
+        url: '/login/v1/validar',
+        headers: {
+          Authorization: this._customToken?.id,
+        },
+        params: {
+          usr: this._authCredentials.userCode,
+          pwd: hashedPassword,
+        },
+        validateStatus: (status: number) => {
+          return status === 201;
+        },
+      });
 
       const authToken: AuthToken = {
         id: `Bearer ${id_token}`,
@@ -140,7 +128,7 @@ export default class LeoAuth {
 
       return authToken;
     } catch (error) {
-      throw new LeoError(error);
+      throw new LeoError(error as Error);
     }
   }
 }

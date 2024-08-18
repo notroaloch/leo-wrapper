@@ -1,34 +1,25 @@
-import axios, {
-  RawAxiosRequestHeaders,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
-import { MicroLeoResponse, SoyUdeGResponse } from '../types';
-import LeoError from '../models/LeoError';
+import axios, { AxiosRequestConfig } from 'axios';
+import { SoyUdgResponse } from '../types';
+import { LeoError } from '../models';
 
-const SoyUdeGAPI = axios.create({
+export const SoyUdgApi = axios.create({
   baseURL: 'https://soyudg.udg.mx',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'User-Agent': 'LeoWrapper',
-  } as RawAxiosRequestHeaders,
+  },
   withCredentials: true,
 });
 
-export const fetchSoyUDG = async <T>(
+export const fetchSoyUdg = async <T>(
   config: AxiosRequestConfig
 ): Promise<T> => {
   try {
-    const { data }: AxiosResponse<SoyUdeGResponse> = await SoyUdeGAPI.request(
-      config
-    );
-
-    const response = data.data as T;
+    const { data } = await SoyUdgApi.request<SoyUdgResponse<T>>(config);
+    const response = data.data;
     return response;
   } catch (error) {
-    throw new LeoError(error);
+    throw new LeoError(error as Error);
   }
 };
-
-export default SoyUdeGAPI;

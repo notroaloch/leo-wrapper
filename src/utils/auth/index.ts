@@ -1,4 +1,4 @@
-import {
+export {
   AUTH_CUSTOM_TOKEN_CYPHER_KEY,
   AUTH_CUSTOM_TOKEN_BASE_PHRASE,
   AUTH_CUSTOM_TOKEN_UNIQUE_CHAR,
@@ -9,19 +9,5 @@ import {
   PASSWORD_HASH_SALT_ROUNDS,
 } from './constants';
 
-import { getFormattedTimestamp, encryptPhrase } from './customToken';
-import { hashPassword } from './hashPassword';
-
-export {
-  AUTH_CUSTOM_TOKEN_CYPHER_KEY,
-  AUTH_CUSTOM_TOKEN_BASE_PHRASE,
-  AUTH_CUSTOM_TOKEN_UNIQUE_CHAR,
-  AUTH_CUSTOM_TOKEN_DATE_LOCALE,
-  AUTH_CUSTOM_TOKEN_DATE_LOCALE_FORMAT,
-  AUTH_CUSTOM_TOKEN_DATE_REGEXP,
-  AUTH_CUSTOM_TOKEN_DATE_REGEXP_REPLACE,
-  PASSWORD_HASH_SALT_ROUNDS,
-  getFormattedTimestamp,
-  encryptPhrase,
-  hashPassword,
-};
+export { getFormattedTimestamp, encryptPhrase } from './customToken';
+export { hashPassword } from './hashPassword';

@@ -20,8 +20,8 @@ export const getFormattedTimestamp = (): string => {
   return formattedDate;
 };
 
-// Custom encryption algorithm (based on Leo Source Code)
-// MAY CHANGE OVER TIME
+/* Custom encryption algorithm (based on Leo Source Code)
+MAY CHANGE OVER TIME */
 
 export const encryptPhrase = (phrase: string, key: string): string => {
   const MIN = 33;

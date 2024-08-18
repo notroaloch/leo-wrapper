@@ -8,15 +8,15 @@ export type AuthToken = {
   expires: string | null;
 };
 
-export type MicroLeoResponse = {
+export type MicroLeoResponse<T> = {
   codigo: number;
   mensaje: string;
-  respuesta: any;
+  respuesta: T;
 };
 
-export type SoyUdeGResponse = {
+export type SoyUdgResponse<T> = {
   code: number;
-  data: any;
+  data: T;
 };
 
 export type AuthTokenResponse = {

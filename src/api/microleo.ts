@@ -1,18 +1,14 @@
-import axios, {
-  RawAxiosRequestHeaders,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { MicroLeoResponse } from '../types';
-import LeoError from '../models/LeoError';
+import { LeoError } from '../models';
 
-const MicroLeoAPI = axios.create({
+export const MicroLeoApi = axios.create({
   baseURL: 'https://micro-leo.udg.mx',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'User-Agent': 'LeoWrapper',
-  } as RawAxiosRequestHeaders,
+  },
   withCredentials: true,
 });
 
@@ -20,15 +16,11 @@ export const fetchMicroLeo = async <T>(
   config: AxiosRequestConfig
 ): Promise<T> => {
   try {
-    const { data }: AxiosResponse<MicroLeoResponse> = await MicroLeoAPI.request(
-      config
-    );
+    const { data } = await MicroLeoApi.request<MicroLeoResponse<T>>(config);
 
-    const response = data.respuesta as T;
+    const response = data.respuesta;
     return response;
   } catch (error) {
-    throw new LeoError(error);
+    throw new LeoError(error as Error);
   }
 };
-
-export default MicroLeoAPI;

@@ -1,2 +1,2 @@
-import LeoWrapper from './models/LeoWrapper';
+import { LeoWrapper } from './models';
 export default LeoWrapper;
